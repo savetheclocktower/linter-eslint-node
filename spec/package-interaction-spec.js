@@ -16,6 +16,7 @@ const paths = {
   eslintLatest: Path.join(root, 'with-eslint-latest')
 };
 
+const packagesRoot = Path.join(root, '.atom', 'packages');
 const fixtureRoot = Path.join(__dirname, 'fixtures', 'ci', 'package-interaction');
 
 async function expectNoNotification () {
@@ -49,11 +50,13 @@ if (process.env.CI) {
       atom.packages.triggerDeferredActivationHooks();
       atom.packages.triggerActivationHook('core:loaded-shell-environment');
 
-      await atom.packages.loadPackage('linter-eslint');
+      await atom.packages.loadPackage(
+        Path.join(packagesRoot, 'linter-eslint')
+      );
 
       await atom.packages.activatePackage('language-javascript');
       await atom.packages.activatePackage('linter-eslint-node');
-      // await atom.packages.activatePackage('linter-eslint');
+      await atom.packages.activatePackage('linter-eslint');
     });
 
     describe('With linter-eslint enabled', () => {
@@ -63,6 +66,7 @@ if (process.env.CI) {
 
       it('should do nothing when opening an ESLint@6 project', async () => {
         await copyFilesIntoProject(paths.eslint6);
+        expect(FS.existsSync(Path.join(paths.eslint6, 'index.js'))).toBe(true);
         let editor = await openAndSetProjectDir(
           Path.join(paths.eslint6, 'index.js'),
           paths.eslint6
