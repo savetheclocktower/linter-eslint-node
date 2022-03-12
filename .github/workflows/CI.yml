@@ -28,6 +28,7 @@ jobs:
           node-version: ${{ matrix.node_version }}
       - uses: volta-cli/action@v1.7.0
       - name: Install multiple Node versions
+        if: runner.os != 'Windows'
         run: |
           volta install node@10
           echo "NODE_10=$(volta which node)" >> $GITHUB_ENV
@@ -35,6 +36,15 @@ jobs:
           echo "NODE_LATEST=$(volta which node)" >> $GITHUB_ENV
           volta install node@16
           echo "NODE_DEFAULT=$(volta which node)" >> $GITHUB_ENV
+      - name: Install multiple Node versions (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          volta install node@10
+          echo "NODE_10=$(volta which node)" >> $env:GITHUB_ENV
+          volta install node@latest
+          echo "NODE_LATEST=$(volta which node)" >> $env:GITHUB_ENV
+          volta install node@16
+          echo "NODE_DEFAULT=$(volta which node)" >> $env:GITHUB_ENV
       - name: Setup dummy ESLint projects
         run: |
           mkdir ~/with-eslint-6 && cd ~/with-eslint-6
