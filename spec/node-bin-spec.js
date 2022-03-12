@@ -143,7 +143,10 @@ if (process.env.CI) {
 
       it('lints correctly both before and after the version change', async () => {
         let debug = await debugJob(editor);
-        expect(debug.nodeVersion).toBe(process.env.NODE_DEFAULT_VERSION);
+        expectVersionMatch(
+          debug.nodeVersion,
+          process.env.NODE_DEFAULT_VERSION
+        );
 
         let results = await lint(editor);
         expect(results.length).toBe(1);
