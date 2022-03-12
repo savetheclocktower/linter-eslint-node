@@ -46,6 +46,12 @@ async function deleteFilesFromProject (projectPath) {
   }
 }
 
+function expectVersionMatch (expected, actual) {
+  expected = expected.replace(/\s/g, '');
+  actual = actual.replace(/\s/g, '');
+  expect(expected).toBe(actual);
+}
+
 if (process.env.CI) {
   describe('Node binary config', () => {
     const linterProvider = linterEslintNode.provideLinter();
@@ -83,7 +89,10 @@ if (process.env.CI) {
 
       it('reports the correct version of Node', async () => {
         let debug = await debugJob(editor);
-        expect(debug.nodeVersion).toBe(process.env.NODE_DEFAULT_VERSION);
+        expectVersionMatch(
+          debug.nodeVersion,
+          process.env.NODE_DEFAULT_VERSION
+        );
       });
     });
 
@@ -110,7 +119,10 @@ if (process.env.CI) {
         expect(results.length).toBe(1);
 
         let debug = await debugJob(editor);
-        expect(debug.nodeVersion).toBe(process.env.NODE_LATEST_VERSION);
+        expectVersionMatch(
+          debug.nodeVersion,
+          process.env.NODE_LATEST_VERSION
+        );
       });
     });
 
@@ -140,7 +152,10 @@ if (process.env.CI) {
         wait(1000);
 
         debug = await debugJob(editor);
-        expect(debug.nodeVersion).toBe(process.env.NODE_LATEST_VERSION);
+        expectVersionMatch(
+          debug.nodeVersion,
+          process.env.NODE_LATEST_VERSION
+        );
 
         results = await lint(editor);
         expect(results.length).toBe(1);
